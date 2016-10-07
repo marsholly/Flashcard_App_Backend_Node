@@ -133,7 +133,23 @@ app.put('/extraQuestion/:id', (req, res) => {
   });
 })
 
-
+app.get('/extraQuestion/:category',(req, res) => {
+  ExtraFlashCard.getAllQuestions((err, questions) => {
+    if(err) {
+      return res.status(400).send(err);
+    }
+    let category = req.params.category;
+    let newQuestionArr = questions.filter(question => {
+      return question.category === category;
+    })
+    let total = newQuestionArr.length;
+    let index = Math.floor(Math.random() * total);
+    let questionObj = newQuestionArr[index];
+    id = questionObj.id;
+    let question = `[ ${questionObj.category} ] Q: ${questionObj.question} \n ${questionObj.answer}`;
+    res.send(question);
+  })
+});
 
 app.listen(PORT, err => {
   console.log(err || `Express listening on port ${PORT}`);
