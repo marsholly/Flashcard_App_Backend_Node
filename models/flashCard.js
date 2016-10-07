@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const questionPath = path.join(__dirname, '../data/flashcard.json');
+const uuid = require('uuid');
 
-exports.getQuestion = function(cb) {
+exports.getAllQuestions = function(cb) {
   fs.readFile(questionPath, (err, buffer) => {
     if (err) return cb(err);
     let data;
@@ -11,7 +12,6 @@ exports.getQuestion = function(cb) {
     } catch(e) {
       data = [];
     }
-    // console.log('data:', data);
     cb(null, data);
   });
 }
@@ -19,4 +19,21 @@ exports.getQuestion = function(cb) {
 exports.write = function(newData, cb) {
   let json = JSON.stringify(newData);
   fs.writeFile(questionPath, json, cb);
+}
+
+exports.createQuestion = function(newQuestion, cb) {
+  exports.getAllQuestions((err, questions) => {
+    if(err) return cb(err);
+    newQuestion.id = uuid();
+    questions.push(newQuestion);
+    exports.write(questions, cb);
+  });
+}
+
+exports.getOneQuestion = function(id, cb) {
+  exports.getAllQuestions((err, questions) => {
+    if(err) return cb(err);
+    let question = questions.filter( q => q.id === id )[0];
+    cb(null, question);
+  });
 }
