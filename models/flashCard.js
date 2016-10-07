@@ -38,10 +38,24 @@ exports.getOneQuestion = function(id, cb) {
   });
 }
 
-exports.removeOneQuestion = function(id, cb) {
+exports.removeOneQuestion = function(_id, cb) {
   exports.getAllQuestions((err, questions) => {
     if(err) return cb(err);
-    let newQuestions = questions.filter(question => question.id !== id);
+    let newQuestions = questions.filter(question => question.id !== _id);
     exports.write(newQuestions, cb);
+  })
+}
+
+exports.updateOneQuestion = function(_id, updateQuestion, cb) {
+  exports.getAllQuestions((err, questions) => {
+    if(err) return cb(err);
+    let index = questions.findIndex(q => q.id === _id);
+    if (index === -1) {
+      return cb({error: "question not found."});
+    }
+    updateQuestion.id = _id;
+    questions[index] = updateQuestion;
+    exports.write(questions, cb);
+    cb(null, updateQuestion);
   })
 }

@@ -35,12 +35,21 @@ app.post('/question', (req, res) => {
 
 // delete a question
 app.delete('/question/:id',(req, res) => {
-  let id = req.params.id;
-  FlashCard.removeOneQuestion(id, err => {
+  let _id = req.params.id;
+  FlashCard.removeOneQuestion(_id, err => {
     if(err) return res.status(400).send(err);
     res.send('done');
   });
 });
+
+// update a question
+app.put('/question/:id', (req, res) => {
+  let _id = req.params.id;
+  FlashCard.updateOneQuestion(_id, req.body, (err, question) => {
+    if(err) return res.status(400).send(err);
+    res.send(question);
+  });
+})
 
 //  get a category question  /question/category
 let id;
